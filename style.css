@@ -13,3 +13,91 @@ header {
   text-align: center;
 }
 
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Fonte base */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  line-height: 1.6;
+  padding: 0;
+}
+
+/* Cabeçalho */
+header {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  color: white;
+  padding: 3rem 1rem;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+/* Seções */
+section {
+  padding: 2rem 1.5rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+section h2 {
+  border-left: 5px solid #3498db;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+section ul {
+  list-style: square;
+  padding-left: 2rem;
+}
+
+section a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+section a:hover {
+  text-decoration: underline;
+}
+
+/* Rodapé */
+footer {
+  background-color: #222;
+  color: white;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  font-size: 0.9rem;
+  margin-top: 3rem;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 2rem;
+  }
+
+  header p {
+    font-size: 1rem;
+  }
+
+  section {
+    padding: 1.5rem 1rem;
+  }
+}

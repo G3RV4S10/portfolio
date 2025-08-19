@@ -3,39 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfólio | Diego Gervasio</title>
+  <title>Lab DC | Painel e IPAM</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="description" content="Painel do laboratório com IPAM simples, visão geral da infraestrutura e ajuda.">
 </head>
 <body>
   <header>
-    <h1>Diego Gervasio de Souza</h1>
-    <p>|Engenheiro da Computação | DevOps | Cibersegurança |</p>
+    <h1>Datacenter Lab</h1>
+    <p>Infra: 2 racks · 10 servidores (7 ESXi, 1 serviços de rede, 2 TrueNAS) · Switch 3Com · vCenter/vSphere</p>
   </header>
 
-  <section id="about">
-    <h2>Sobre Mim</h2>
-    <p>Sou estudante de Engenharia da Computação com foco em xxxxxxxxxxxxxxxxxxxxxxxxxxx.</p>
-  </section>
-
-  <section id="portfolio">
-    <h2>Portfólio</h2>
+  <nav class="top-nav">
     <ul>
-      <li><strong>Preencher posteriormente</strong> – Preencher posteriormente.</li>
-      <li><strong>Preencher posteriormente</strong> – Preencher posteriormente.</li>
-      <li><strong>Preencher posteriormente</strong> – Preencher posteriormente.</li>
-      <li><strong>Preencher posteriormente</strong> – Preencher posteriormente.</li>
-      <li><strong>Laboratório de ambiente virtualizado</strong> – Configuração e gerenciamento de servidores VMware ESXi, implantação do vCenter (vSphere) e criação de redes isoladas.</li>.</li>
+      <li><a href="#" data-target="home" class="active">Início</a></li>
+      <li><a href="#" data-target="ipam">IPAM</a></li>
+      <li><a href="#" data-target="help">Ajuda</a></li>
     </ul>
-  </section>
+  </nav>
 
-  <section id="github-courses">
-    <h2>Meus Cursos no GitHub</h2>
-    <p>Veja meus estudos e projetos:</p>
-    <a href="https://github.com/G3RV4S10" target="_blank">🌐 github.com/G3RV4S10</a>
-  </section>
+  <main>
+    <section id="home" class="page-section active">
+      <div class="cards">
+        <div class="card">
+          <h3>Inventário</h3>
+          <ul class="list">
+            <li><strong>Racks</strong>: 2</li>
+            <li><strong>Servidores</strong>: 10 (7 ESXi, 1 Rede/DHCP/VPN, 2 TrueNAS)</li>
+            <li><strong>vCenter/vSphere</strong>: operacional</li>
+            <li><strong>Switch</strong>: 3Com</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Estatísticas IP</h3>
+          <div id="ip-stats" class="stats">
+            <div><span id="stat-free">0</span><small>Livres</small></div>
+            <div><span id="stat-used">0</span><small>Em uso</small></div>
+            <div><span id="stat-reserved">0</span><small>Reservados</small></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Ações rápidas</h3>
+          <div class="actions">
+            <button id="go-to-ipam">Abrir IPAM</button>
+            <button id="btn-sync-vsphere" class="secondary">Sincronizar vSphere (beta)</button>
+          </div>
+          <p class="muted">A sincronização requer um proxy/API configurado (veja a aba Ajuda).</p>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Visão Geral</h2>
+        <p>Este painel reúne o controle de endereços IP (IPAM), atalhos e documentação do seu laboratório.</p>
+      </div>
+    </section>
+
+    <section id="ipam" class="page-section">
+      <h2>IPAM</h2>
+      <div class="ipam-toolbar">
+        <form id="form-subnet" class="inline">
+          <label>CIDR
+            <input type="text" id="input-cidr" placeholder="Ex: 192.168.10.0/24" required />
+          </label>
+          <label>VLAN
+            <input type="text" id="input-vlan" placeholder="Opcional" />
+          </label>
+          <label>Descrição
+            <input type="text" id="input-desc" placeholder="Ex: Rede VM Prod" />
+          </label>
+          <button type="submit">Adicionar Sub-rede</button>
+        </form>
+        <div class="right">
+          <button id="btn-export">Exportar CSV</button>
+          <label class="btn-file">
+            Importar CSV
+            <input type="file" id="file-import" accept=".csv" />
+          </label>
+          <button id="btn-clear" class="danger">Limpar IPAM</button>
+        </div>
+      </div>
+
+      <div class="filters inline">
+        <label>Status
+          <select id="filter-status">
+            <option value="all">Todos</option>
+            <option value="Livre">Livre</option>
+            <option value="Em uso">Em uso</option>
+            <option value="Reservado">Reservado</option>
+          </select>
+        </label>
+        <label>Buscar
+          <input type="text" id="filter-search" placeholder="IP, hostname, dono, notas..." />
+        </label>
+      </div>
+
+      <div id="subnets-container" class="subnets"></div>
+    </section>
+
+    <section id="help" class="page-section">
+      <h2>Ajuda</h2>
+      <h3>Como usar o IPAM</h3>
+      <ol>
+        <li>Adicione uma sub-rede em CIDR (ex.: 192.168.10.0/24). O sistema gera a lista de hosts automaticamente.</li>
+        <li>Atualize o status de IPs para <em>Em uso</em> ou <em>Reservado</em>, informe hostname, MAC, dono e notas.</li>
+        <li>Use filtros de status e busca. Exporte/importe dados em CSV.</li>
+      </ol>
+
+      <h3>Integração com vSphere (beta)</h3>
+      <p>Por questões de segurança/CORS, é recomendado um proxy backend simples. Configure os parâmetros abaixo e exponha endpoints que retornem VMs/Hosts com IPs.</p>
+      <form id="form-config" class="stack">
+        <label>Base URL do Proxy/API
+          <input type="url" id="cfg-proxy" placeholder="Ex: https://proxy.seu-dominio.com/api" />
+        </label>
+        <label>Token (opcional)
+          <input type="text" id="cfg-token" placeholder="Bearer ..." />
+        </label>
+        <button type="submit">Salvar Configuração</button>
+      </form>
+      <p class="muted">Exemplo de endpoints esperados:
+        <code>GET /vsphere/vms</code> → <small>[{ name, ipAddresses: ["192.168.10.23"], macs: ["00:11:22:33:44:55"] }]</small>
+      </p>
+
+      <h3>Ideias de melhorias</h3>
+      <ul>
+        <li>Inventário automático via vSphere REST SDK e mapeamento de IPs para o IPAM</li>
+        <li>Integração com DHCP (Kea/ISC) para reservas automáticas</li>
+        <li>Integração com Firewall (pfSense/OPNsense) para objetos de rede</li>
+        <li>Integração com NetBox para CMDB</li>
+        <li>Backup/sync do IPAM para um backend (TrueNAS S3/Minio)</li>
+      </ul>
+    </section>
+  </main>
 
   <footer>
-    <p>© 2025 Diego. Todos os direitos reservados.</p>
+    <p>© 2025 Lab DC. Feito para operar seu laboratório.</p>
   </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
